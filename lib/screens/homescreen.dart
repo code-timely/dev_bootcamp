@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _screens = [
     const ImagePage(),
     const RiddlesPage(),
-    CryptoPricePage(),
+    const CryptoPricePage(),
   ];
 
   void _onTabTapped(int index) {
