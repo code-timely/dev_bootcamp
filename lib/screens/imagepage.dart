@@ -17,10 +17,12 @@ class _ImagePageState extends State<ImagePage> {
   Uint8List? imageBytes;
   bool isLoading = true;
   final String apiKey = 'bsu3Nh112YxP9gZW+HIfqw==l19KUWeR8A6toWaz';
+  late CancelToken cancelToken;
 
   @override
   void initState() {
     super.initState();
+    cancelToken = CancelToken(); // Initialize cancel token
     fetchRandomImage();
   }
 
@@ -44,18 +46,29 @@ class _ImagePageState extends State<ImagePage> {
           'width': 640, 
           'height': 480,
         },
+        cancelToken: cancelToken,  // Attach cancel token
       );
 
-      setState(() {
-        imageBytes = response.data;
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          imageBytes = response.data;
+          isLoading = false;
+        });
+      }
     } catch (e) {
       log.e('Error fetching image: $e');
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
+  }
+
+  @override
+  void dispose() {
+    cancelToken.cancel();  // Cancel any ongoing requests when the widget is disposed
+    super.dispose();
   }
 
   @override
@@ -71,37 +84,37 @@ class _ImagePageState extends State<ImagePage> {
             child: Center(
               child: isLoading
                   ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Lottie.asset(
-                'assets/loading.json', 
-                width: 180,
-                height: 180,
-              ),
-              const SizedBox(height: 35), 
-              Text(
-                'Hang tight, fetching an abstract image!',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[700],
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 10), 
-              Text(
-                'This might take a few seconds...',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[500],
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          )
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Lottie.asset(
+                          'assets/loading.json',
+                          width: 180,
+                          height: 180,
+                        ),
+                        const SizedBox(height: 35),
+                        Text(
+                          'Hang tight, fetching an abstract image!',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[700],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'This might take a few seconds...',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[500],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    )
                   : imageBytes != null
                       ? Container(
-                          width: 350, 
+                          width: 350,
                           height: 420,
                           decoration: BoxDecoration(
                             color: Colors.grey[300],
@@ -110,8 +123,8 @@ class _ImagePageState extends State<ImagePage> {
                             borderRadius: BorderRadius.circular(10.0),
                             child: Image.memory(
                               imageBytes!,
-                              fit: BoxFit.cover, 
-                              width: 300,  
+                              fit: BoxFit.cover,
+                              width: 300,
                               height: 400,
                             ),
                           ),

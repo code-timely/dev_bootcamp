@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:dev_bootcamp/components/cryptocard.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/web.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+
+final log = Logger();
 
 class CryptoPricePage extends StatefulWidget {
   const CryptoPricePage({super.key});

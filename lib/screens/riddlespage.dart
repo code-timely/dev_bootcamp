@@ -3,8 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:lottie/lottie.dart';
 
 class RiddlesPage extends StatefulWidget {
-
   const RiddlesPage({super.key});
+
   @override
   State<RiddlesPage> createState() => _RiddlesPageState();
 }
@@ -13,10 +13,12 @@ class _RiddlesPageState extends State<RiddlesPage> {
   List<dynamic> riddles = [];
   bool isLoading = true;
   final String apiKey = 'bsu3Nh112YxP9gZW+HIfqw==l19KUWeR8A6toWaz';
+  late CancelToken cancelToken;  // To cancel ongoing requests
 
   @override
   void initState() {
     super.initState();
+    cancelToken = CancelToken();  // Initialize cancel token
     fetchRiddles();
   }
 
@@ -34,19 +36,30 @@ class _RiddlesPageState extends State<RiddlesPage> {
           },
         ),
         queryParameters: {
-          'limit': 10, // Fetch 10 riddles
+          'limit': 10, 
         },
+        cancelToken: cancelToken,  // Attach cancel token
       );
 
-      setState(() {
-        riddles = response.data;
-        isLoading = false;
-      });
+      if (mounted) {  // Check if the widget is still mounted before updating the state
+        setState(() {
+          riddles = response.data;
+          isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
+  }
+
+  @override
+  void dispose() {
+    cancelToken.cancel();  // Cancel any ongoing requests when the widget is disposed
+    super.dispose();
   }
 
   @override
@@ -63,41 +76,42 @@ class _RiddlesPageState extends State<RiddlesPage> {
             child: Center(
               child: isLoading
                   ? Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Lottie.asset(
-                  'assets/loading.json', 
-                  width: 180,
-                  height: 180,
-                ),
-                const SizedBox(height: 35), 
-                Text(
-                  'Hang tight, fetching riddles...',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[700],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 10), 
-                Text(
-                  'This might take a few seconds...',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[500],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-                        )
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Lottie.asset(
+                          'assets/loading.json',
+                          width: 180,
+                          height: 180,
+                        ),
+                        const SizedBox(height: 35),
+                        Text(
+                          'Hang tight, fetching riddles...',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[700],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'This might take a few seconds...',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[500],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    )
                   : ListView.builder(
                       itemCount: riddles.length,
                       itemBuilder: (context, index) {
                         final riddle = riddles[index];
                         return Card(
                           elevation: 4.0,
-                          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
