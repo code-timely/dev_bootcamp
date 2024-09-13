@@ -1,3 +1,4 @@
+import 'package:dev_bootcamp/screens/cryptopricepage.dart';
 import 'package:dev_bootcamp/screens/imagepage.dart';
 import 'package:dev_bootcamp/screens/riddlespage.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screens = [
     const ImagePage(),
-    const RiddlesPage()
+    const RiddlesPage(),
+    CryptoPricePage(),
     // FunnyScreen(),
     // ListScreen(),
     // LiveScreen(),
@@ -42,10 +44,10 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.list),
             label: 'List',
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.show_chart),
-          //   label: 'Live',
-          // ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.show_chart),
+            label: 'Live',
+          ),
         ],
       ),
     );
