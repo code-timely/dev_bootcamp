@@ -17,9 +17,6 @@ class _HomeScreenState extends State<HomeScreen> {
     const ImagePage(),
     const RiddlesPage(),
     CryptoPricePage(),
-    // FunnyScreen(),
-    // ListScreen(),
-    // LiveScreen(),
   ];
 
   void _onTabTapped(int index) {

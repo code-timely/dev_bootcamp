@@ -1,35 +1,61 @@
 import 'dart:convert';
+import 'package:dev_bootcamp/components/cryptocard.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class CryptoPricePage extends StatefulWidget {
+  const CryptoPricePage({super.key});
+
   @override
-  _CryptoPricePageState createState() => _CryptoPricePageState();
+  State<CryptoPricePage> createState() => _CryptoPricePageState();
 }
 
 class _CryptoPricePageState extends State<CryptoPricePage> {
-  WebSocketChannel? channel;
-  String? lastPrice = '';
+  WebSocketChannel? btcChannel;
+  WebSocketChannel? ethChannel;
+  WebSocketChannel? bnbChannel;
+  String? btcPrice = '';
+  String? ethPrice = '';
+  String? bnbPrice = '';
 
   @override
   void initState() {
     super.initState();
-    // Connect to the Binance WebSocket for real-time Bitcoin price updates
-    channel = IOWebSocketChannel.connect(
+
+    btcChannel = IOWebSocketChannel.connect(
         'wss://stream.binance.com:9443/ws/btcusdt@ticker');
-    // Listen for updates
-    channel!.stream.listen((data) {
+    btcChannel!.stream.listen((data) {
       final decodedData = jsonDecode(data);
       setState(() {
-        lastPrice = decodedData['c']; // 'c' stands for the current price
+        btcPrice = decodedData['c'];
+      });
+    });
+
+    ethChannel = IOWebSocketChannel.connect(
+        'wss://stream.binance.com:9443/ws/ethusdt@ticker');
+    ethChannel!.stream.listen((data) {
+      final decodedData = jsonDecode(data);
+      setState(() {
+        ethPrice = decodedData['c'];
+      });
+    });
+
+    bnbChannel = IOWebSocketChannel.connect(
+        'wss://stream.binance.com:9443/ws/bnbusdt@ticker');
+    bnbChannel!.stream.listen((data) {
+      final decodedData = jsonDecode(data);
+      setState(() {
+        bnbPrice = decodedData['c'];
       });
     });
   }
 
   @override
   void dispose() {
-    channel?.sink.close();
+    btcChannel?.sink.close();
+    ethChannel?.sink.close();
+    bnbChannel?.sink.close();
     super.dispose();
   }
 
@@ -37,28 +63,19 @@ class _CryptoPricePageState extends State<CryptoPricePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Real-Time Crypto Prices'),
+        title: const Text('Crypto Prices'),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'BTC/USDT Current Price:',
-                style: TextStyle(fontSize: 20),
-              ),
-              SizedBox(height: 10),
-              lastPrice != null
-                  ? Text(
-                      '\$${lastPrice!}',
-                      style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green),
-                    )
-                  : CircularProgressIndicator(),
+              cryptoCard('BTC/USDT', btcPrice),
+              const SizedBox(height: 10),
+              cryptoCard('ETH/USDT', ethPrice),
+              const SizedBox(height: 10),
+              cryptoCard('BNB/USDT', bnbPrice),
             ],
           ),
         ),
