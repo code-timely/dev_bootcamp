@@ -1,16 +1,14 @@
 # dev_bootcamp
 
-A new Flutter project.
+I have implemented task `Funny enough? 🔫` ,  `List ’em all! 💯` , `Is it live? 🔌`
 
-## Getting Started
+I have utilised API Ninjas [random image api](https://api-ninjas.com/api/randomimage) for `Funny enough? 🔫` & it [Riddles API](https://api-ninjas.com/api/riddles) for `List ’em all! 💯`
 
-This project is a starting point for a Flutter application.
+To implement 2 way connection I have leverage Binance's [websocket API](https://binance-docs.github.io/apidocs/spot/en/#websocket-market-streams) to display live prices of crypto currencies for `Is it live? 🔌`
 
-A few resources to get you started if this is your first Flutter project:
+The loading animation has been downloaded from [LottieFiles](https://lottiefiles.com/)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+
+
